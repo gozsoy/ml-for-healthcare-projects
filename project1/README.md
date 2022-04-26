@@ -1,50 +1,41 @@
-# ml-for-healthcare
+# Data Location
+Create a folder named "data" in the main directory.
+Put "mitbih_test.csv", "mitbih_train.csv", "ptbdb_abnormal.csv", "ptbdb_normal.csv" inside.
 
-### task 1
+# Environment Setup
 
-vanilla cnn results on mitbih\
-accuracy: 0.9787
+```
+conda env create -f environment.yml
+conda activate ml4hc_project1
+```
 
-vanilla lstm results on mitbih\
-accuracy: 0.9775
+Please note for reproducibility that all reported results have been generated using `bsub` on ETH Zürich's Euler cluster using CPUs.
 
-vanilla cnn results on ptbdb\
-accuracy: 0.9742 - auroc: 0.9935 - auprc: 0.9965
+# Reproduce results as a batch
 
-vanilla lstm results on ptbdb\
-accuracy: 0.7221 - auroc: 0.5005 - auprc: 0.7236
+## Baselines
 
-### task 2
+```
+chmod +x baseline_jobs.sh
+./baseline_jobs.sh
+```
 
-bidirectional lstm on mitbih\
-accuracy: 0.9863
+## Our models
 
-simple_rnn attention on mitbih\
-accuracy: 0.9255
+```
+chmod +x main_jobs.sh
+./main_jobs.sh
+```
 
-lstm_attention on mitbih\
-accuracy: 0.9847
+## Ensemble models
 
-inception_net on mitbih\
-accuracy: 0.9848
+```
+chmod +x ensemble_jobs.sh
+./ensemble_jobs.sh
+```
 
-bidirectional lstm on ptbdb\
-accuracy: 0.9742 - auroc: 0.9927 - auprc: 0.9955
-
-simple_rnn attention on ptbdb\
-accuracy: 0.7667 - auroc: 0.8287 - auprc: 0.9283
-
-lstm_attention on ptbdb\
-accuracy: 0.7513 - auroc: 0.8140 - auprc: 0.9245
-
-inception_net on ptbdb\
-accuracy: 0.9821 - auroc: 0.9945 - auprc: 0.9965
+# Reproduce one experiment at a time
+Please see .sh files.
 
 
-### task 4
-
-transfer learning train all layers on ptbdb\
-accuracy: 0.9907 - auroc: 0.9960 - auprc: 0.9972
-
-transfer learning freeze lstm on ptbdb\
-accuracy: 0.9804 - auroc: 0.9930 - auprc: 0.9955
+Results will be saved in checkpoints folder.
