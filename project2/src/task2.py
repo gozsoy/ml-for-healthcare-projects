@@ -9,6 +9,7 @@ from sklearn.preprocessing import LabelBinarizer
 from utils import set_seeds, load_data, get_argument_parser
 
 
+# gets the dense word vector for a particular word from trained word2vec model.
 def get_vector(cfg, word, word_vectors):
     isPresent = False
     try:
@@ -20,6 +21,8 @@ def get_vector(cfg, word, word_vectors):
     return isPresent, word_vector
 
 
+# gets the sentence embedding which is 
+# the average of each word vector in the sentence.
 def get_sentence_embedding(cfg, row, word_vectors):
     sent_vector = np.zeros((cfg['vector_size'],))
     present_word_count = 0
@@ -29,12 +32,14 @@ def get_sentence_embedding(cfg, row, word_vectors):
         if isPresent:  # only sum non-zero words
             present_word_count += 1
             sent_vector += word_vector
-
-    sent_vector = sent_vector/present_word_count
+    
+    if present_word_count != 0:
+        sent_vector = sent_vector/present_word_count
 
     return sent_vector
 
 
+# trains word2vec model using gensim library
 def train_word2vec(cfg):
     train_df = load_data(cfg=cfg, split_type='train', cached=cfg['cached'])
 
@@ -48,6 +53,7 @@ def train_word2vec(cfg):
     return w2v_model.wv  # return keyedVectors
 
 
+# loads data from disk and prepares it task-specifically.
 def prepare_data(cfg, word_vectors):
 
     train_df = load_data(cfg=cfg, split_type='train', cached=cfg['cached'])
@@ -72,6 +78,7 @@ def prepare_data(cfg, word_vectors):
     return X_train, X_dev, X_test, y_train, y_dev, y_test, lb
 
 
+# trains the task 2 model with provided training arguments.
 def train(cfg, X_train, X_dev, X_test, y_train, y_dev, y_test):
 
     inputs = tf.keras.layers.Input(shape=(X_train.shape[1],))
@@ -107,10 +114,9 @@ def train(cfg, X_train, X_dev, X_test, y_train, y_dev, y_test):
               shuffle=True, callbacks=[early_stopper, lr_scheduler, 
               checkpointer], validation_data=(X_dev, y_dev))
 
-    model.load_weights(file_path)  # load the best model
     model.evaluate(x=X_test, y=y_test)
 
-    return  # variables for further error analysis
+    return
 
 
 if __name__ == '__main__':
